@@ -9,8 +9,6 @@ from torch.distributions.categorical import Categorical
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-x = torch.Tensor(np.array([1,2,3]))
-# x.to(device='cuda:0')
 
 def combined_shape(length, shape=None):
     if shape is None:
@@ -72,13 +70,14 @@ class MLPCategoricalActor(Actor):
     def __init__(self, obs_dim, act_dim, hidden_sizes, activation):
         super().__init__()
         self.logits_net = mlp([obs_dim] + list(hidden_sizes) + [act_dim], activation)
+        self.logits_net.to(device)
 
     def _distribution(self, obs):
-        logits = self.logits_net(obs)
+        logits = self.logits_net(obs.to(device))
         return Categorical(logits=logits)
 
     def _log_prob_from_distribution(self, pi, act):
-        return pi.log_prob(act)
+        return pi.log_prob(act.to(device))
 
 
 class MLPGaussianActor(Actor):
@@ -88,14 +87,15 @@ class MLPGaussianActor(Actor):
         log_std = -0.5 * np.ones(act_dim, dtype=np.float32)
         self.log_std = torch.nn.Parameter(torch.as_tensor(log_std))
         self.mu_net = mlp([obs_dim] + list(hidden_sizes) + [act_dim], activation)
+        self.mu_net.to(device)
 
     def _distribution(self, obs):
-        mu = self.mu_net(obs)
+        mu = self.mu_net(obs.to(device))
         std = torch.exp(self.log_std)
-        return Normal(mu, std)
+        return Normal(mu.to(device), std.to(device))
 
     def _log_prob_from_distribution(self, pi, act):
-        return pi.log_prob(act).sum(axis=-1)    # Last axis sum needed for Torch Normal distribution
+        return pi.log_prob(act.to(device)).sum(axis=-1)    # Last axis sum needed for Torch Normal distribution
 
 
 class MLPCritic(nn.Module):
@@ -103,9 +103,10 @@ class MLPCritic(nn.Module):
     def __init__(self, obs_dim, hidden_sizes, activation):
         super().__init__()
         self.v_net = mlp([obs_dim] + list(hidden_sizes) + [1], activation)
+        self.v_net.to(device)
 
     def forward(self, obs):
-        return torch.squeeze(self.v_net(obs), -1) # Critical to ensure v has right shape.
+        return torch.squeeze(self.v_net(obs.to(device)), -1) # Critical to ensure v has right shape.
 
 
 
@@ -133,7 +134,7 @@ class MLPActorCritic(nn.Module):
             a = pi.sample()
             logp_a = self.pi._log_prob_from_distribution(pi, a)
             v = self.v(obs)
-        return a.numpy(), v.numpy(), logp_a.numpy()
+        return a.cpu().numpy(), v.cpu().numpy(), logp_a.cpu().numpy()
 
     def act(self, obs):
         return self.step(obs)[0]

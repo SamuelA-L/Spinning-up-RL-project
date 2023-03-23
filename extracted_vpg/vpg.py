@@ -3,10 +3,12 @@ import torch
 from torch.optim import Adam
 import gym
 import time
-import core as core
+import vpg_core as core
 from logx import EpochLogger
 # from spinup.utils.mpi_pytorch import setup_pytorch_for_mpi, sync_params, mpi_avg_grads
 # from spinup.utils.mpi_tools import mpi_fork, mpi_avg, proc_id, mpi_statistics_scalar, num_procs
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def mpi_statistics_scalar(x, with_min_and_max=False):
@@ -221,10 +223,10 @@ def vpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
 
         # Policy loss
         pi, logp = ac.pi(obs, act)
-        loss_pi = -(logp * adv).mean()
+        loss_pi = -(logp.to(device) * adv.to(device) ).mean()
 
         # Useful extra info
-        approx_kl = (logp_old - logp).mean().item()
+        approx_kl = (logp_old.cpu() - logp.cpu()).mean().item()
         ent = pi.entropy().mean().item()
         pi_info = dict(kl=approx_kl, ent=ent)
 
@@ -233,7 +235,7 @@ def vpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
     # Set up function for computing value loss
     def compute_loss_v(data):
         obs, ret = data['obs'], data['ret']
-        return ((ac.v(obs) - ret) ** 2).mean()
+        return ((ac.v(obs.to(device)) - ret.to(device)) ** 2).mean()
 
     # Set up optimizers for policy and value function
     pi_optimizer = Adam(ac.pi.parameters(), lr=pi_lr)
