@@ -6,17 +6,12 @@ import numpy as np
 def mpi_fork(n, bind_to_core=False):
     """
     Re-launches the current script with workers linked by MPI.
-
     Also, terminates the original process that launched it.
-
     Taken almost without modification from the Baselines function of the
     `same name`_.
-
     .. _`same name`: https://github.com/openai/baselines/blob/master/baselines/common/mpi_fork.py
-
     Args:
         n (int): Number of process to split into.
-
         bind_to_core (bool): Bind each MPI process to a core.
     """
     if n<=1: 
@@ -48,7 +43,8 @@ def allreduce(*args, **kwargs):
 
 def num_procs():
     """Count active MPI processes."""
-    return MPI.COMM_WORLD.Get_size()
+    # return MPI.COMM_WORLD.Get_size()
+    return 1
 
 def broadcast(x, root=0):
     MPI.COMM_WORLD.Bcast(x, root=root)
@@ -66,27 +62,30 @@ def mpi_sum(x):
 def mpi_avg(x):
     """Average a scalar or vector over MPI processes."""
     return mpi_sum(x) / num_procs()
-    
+
+# TODO add multithread support
 def mpi_statistics_scalar(x, with_min_and_max=False):
     """
     Get mean/std and optional min/max of scalar x across MPI processes.
-
     Args:
         x: An array containing samples of the scalar to produce statistics
             for.
-
         with_min_and_max (bool): If true, return min and max of x in 
             addition to mean and std.
     """
     x = np.array(x, dtype=np.float32)
-    global_sum, global_n = mpi_sum([np.sum(x), len(x)])
-    mean = global_sum / global_n
+    # global_sum, global_n = mpi_sum([np.sum(x), len(x)])
+    # mean = global_sum / global_n
+    mean = np.mean(x)
 
-    global_sum_sq = mpi_sum(np.sum((x - mean)**2))
-    std = np.sqrt(global_sum_sq / global_n)  # compute global std
+    # global_sum_sq = mpi_sum(np.sum((x - mean)**2))
+    # std = np.sqrt(global_sum_sq / global_n)  # compute global std
+    std = np.std(x)
 
     if with_min_and_max:
-        global_min = mpi_op(np.min(x) if len(x) > 0 else np.inf, op=MPI.MIN)
-        global_max = mpi_op(np.max(x) if len(x) > 0 else -np.inf, op=MPI.MAX)
+        # global_min = mpi_op(np.min(x) if len(x) > 0 else np.inf, op=MPI.MIN)
+        # global_max = mpi_op(np.max(x) if len(x) > 0 else -np.inf, op=MPI.MAX)
+        global_min = np.min(x) if len(x) > 0 else np.inf
+        global_max = np.max(x) if len(x) > 0 else -np.inf
         return mean, std, global_min, global_max
     return mean, std

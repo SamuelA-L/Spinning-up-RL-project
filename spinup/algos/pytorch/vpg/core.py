@@ -7,6 +7,10 @@ import torch.nn as nn
 from torch.distributions.normal import Normal
 from torch.distributions.categorical import Categorical
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+x = torch.Tensor(np.array([1,2,3]))
+# x.to(device='cuda:0')
 
 def combined_shape(length, shape=None):
     if shape is None:

@@ -4,6 +4,7 @@ import scipy.signal
 import torch
 import torch.nn as nn
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def combined_shape(length, shape=None):
     if shape is None:
