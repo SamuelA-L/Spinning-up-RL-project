@@ -4,7 +4,7 @@ import numpy as np
 import gym
 import faulthandler
 
-faulthandler.enable()
+# faulthandler.enable()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 x = torch.Tensor(np.array([1,2,3]))
