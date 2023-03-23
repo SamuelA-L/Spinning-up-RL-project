@@ -7,8 +7,8 @@ import pdb
 
 
 
-# env_fn = lambda : gym.make('LunarLander-v2')
-env_fn = lambda : gym.make('Walker2d-v2')
+env_fn = lambda : gym.make('LunarLander-v2')
+# env_fn = lambda : gym.make('Walker2d-v2')
 
 
 ac_kwargs = dict(hidden_sizes=[64,64], activation=torch.nn.ReLU)

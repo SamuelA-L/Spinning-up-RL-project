@@ -3,12 +3,9 @@ import torch
 import numpy as np
 import gym
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-x = torch.Tensor(np.array([1,2,3]))
-
-x.to(device)
-
 env_fn = lambda : gym.make('LunarLander-v2')
+# env_fn = lambda : gym.make('Walker2d-v2')
+
 
 ac_kwargs = dict(hidden_sizes=[64,64], activation=torch.nn.ReLU)
 
