@@ -7,13 +7,13 @@ import pdb
 
 
 
-env_fn = lambda : gym.make('LunarLander-v2')
-# env_fn = lambda : gym.make('Walker2d-v2')
+# env_fn = lambda : gym.make('LunarLander-v2')
+env_fn = lambda : gym.make('Walker2d-v2')
 
 
-ac_kwargs = dict(hidden_sizes=[64,64], activation=torch.nn.ReLU)
+ac_kwargs = dict(hidden_sizes=[256,256,256])
 
-logger_kwargs = dict(output_dir='data', exp_name='vpg_4x_512')
+logger_kwargs = dict(output_dir='data', exp_name='profile_vpg')
 
 vpg(
     env_fn,

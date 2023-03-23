@@ -27,20 +27,22 @@ class MLPActor(nn.Module):
         super().__init__()
         pi_sizes = [obs_dim] + list(hidden_sizes) + [act_dim]
         self.pi = mlp(pi_sizes, activation, nn.Tanh)
+        self.pi.to(device)
         self.act_limit = act_limit
 
     def forward(self, obs):
         # Return output from network scaled to action space limits.
-        return self.act_limit * self.pi(obs)
+        return self.act_limit * self.pi(obs.to(device))
 
 class MLPQFunction(nn.Module):
 
     def __init__(self, obs_dim, act_dim, hidden_sizes, activation):
         super().__init__()
         self.q = mlp([obs_dim + act_dim] + list(hidden_sizes) + [1], activation)
+        self.q.to(device)
 
     def forward(self, obs, act):
-        q = self.q(torch.cat([obs, act], dim=-1))
+        q = self.q(torch.cat([obs.to(device), act.to(device)], dim=-1))
         return torch.squeeze(q, -1) # Critical to ensure q has right shape.
 
 class MLPActorCritic(nn.Module):
@@ -55,9 +57,12 @@ class MLPActorCritic(nn.Module):
 
         # build policy and value functions
         self.pi = MLPActor(obs_dim, act_dim, hidden_sizes, activation, act_limit)
+        self.pi.to(device)
         self.q1 = MLPQFunction(obs_dim, act_dim, hidden_sizes, activation)
+        self.q1.to(device)
         self.q2 = MLPQFunction(obs_dim, act_dim, hidden_sizes, activation)
+        self.q2.to(device)
 
     def act(self, obs):
         with torch.no_grad():
-            return self.pi(obs).numpy()
+            return self.pi(obs.to(device)).cpu().numpy()
