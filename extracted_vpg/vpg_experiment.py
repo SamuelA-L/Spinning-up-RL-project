@@ -20,7 +20,7 @@ vpg(
     ac_kwargs=ac_kwargs,
     seed=0, 
     steps_per_epoch=5000,
-    epochs=5,
+    epochs=500,
     gamma=0.99,
     pi_lr=3e-4,
     vf_lr=1e-3,

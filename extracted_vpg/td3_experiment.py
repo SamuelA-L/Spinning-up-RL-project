@@ -19,7 +19,7 @@ td3(
     ac_kwargs=ac_kwargs,
     seed=0, 
     steps_per_epoch=4000,
-    epochs=5,
+    epochs=500,
     replay_size=int(1e6),
     gamma=0.99, 
     polyak=0.995,
