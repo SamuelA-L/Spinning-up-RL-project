@@ -4,7 +4,8 @@ import os
 import os.path as osp
 import tensorflow as tf
 import torch
-from logx import EpochLogger, restore_tf_graph
+from logx import EpochLogger
+from logx import restore_tf_graph
 
 
 def load_policy_and_env(fpath, itr='last', deterministic=False):
@@ -38,6 +39,7 @@ def load_policy_and_env(fpath, itr='last', deterministic=False):
             # 'XX' is either an integer or empty string. Empty string case
             # corresponds to len(x)==8, hence that case is excluded.
             saves = [int(x.split('.')[0][5:]) for x in os.listdir(pytsave_path) if len(x)>8 and 'model' in x]
+            print(f"--------{saves}---------")
 
         itr = '%d'%max(saves) if len(saves) > 0 else ''
 

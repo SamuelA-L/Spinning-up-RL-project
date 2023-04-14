@@ -96,7 +96,14 @@ class Logger:
                 should give them all the same ``exp_name``.)
         """
         if proc_id()==0:
-            self.output_dir = output_dir or "/tmp/experiments/%i"%int(time.time())
+            i = 0
+            while True :
+                current_exp_dir = f'{output_dir}/{exp_name}/{exp_name}_{i}'
+                if not osp.exists(current_exp_dir) :
+                    break
+                i+=1
+
+            self.output_dir = current_exp_dir or "/tmp/experiments/%i"%int(time.time())
             if osp.exists(self.output_dir):
                 print("Warning: Log dir %s already exists! Storing info there anyway."%self.output_dir)
             else:
@@ -269,8 +276,8 @@ class Logger:
                 # something different for your personal PyTorch project.
                 # We use a catch_warnings() context to avoid the warnings about
                 # not being able to save the source code.
-                torch.save(self.pytorch_saver_elements, fname)
-
+                torch.save(self.pytorch_saver_elements.cpu(), fname)
+                self.pytorch_saver_elements.to('cuda')
 
     def dump_tabular(self):
         """

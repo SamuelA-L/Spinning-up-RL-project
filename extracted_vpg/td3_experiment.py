@@ -4,7 +4,6 @@ import numpy as np
 import gym
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 # env_fn = lambda : gym.make('LunarLander-v2')
 env_fn = lambda : gym.make('Walker2d-v2')
 
@@ -19,7 +18,7 @@ td3(
     ac_kwargs=ac_kwargs,
     seed=0, 
     steps_per_epoch=4000,
-    epochs=500,
+    epochs=10,
     replay_size=int(1e6),
     gamma=0.99, 
     polyak=0.995,
