@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = "cpu"
+# device = "cpu"
 
 def combined_shape(length, shape=None):
     if shape is None:

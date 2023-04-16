@@ -17,13 +17,6 @@ for i in range(5):
     ac_kwargs = dict(hidden_sizes=size, activation=torch.nn.ReLU)
     logger_kwargs = dict(output_dir='data', exp_name=exp_name)
 
-    profiler = torch.profiler.profile(
-        schedule=torch.cuda.profiler.schedule(),
-        on_trace_ready=torch.profiler.tensorboard_trace_handler(f"data/{exp_name}/{exp_name}.prof"),
-        record_shapes=True,
-        with_stack=True)
-
-    profiler.start()
     td3(
         env_fn,
         ac_kwargs=ac_kwargs,
@@ -32,4 +25,3 @@ for i in range(5):
         logger_kwargs=logger_kwargs,
         save_freq=1
     )
-    profiler.stop()
