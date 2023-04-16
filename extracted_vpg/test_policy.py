@@ -148,6 +148,9 @@ if __name__ == '__main__':
     parser.add_argument('--itr', '-i', type=int, default=-1)
     parser.add_argument('--deterministic', '-d', action='store_true')
     args = parser.parse_args()
+    import faulthandler
+    faulthandler.enable()
+
     env, get_action = load_policy_and_env(args.fpath, 
                                           args.itr if args.itr >=0 else 'last',
                                           args.deterministic)

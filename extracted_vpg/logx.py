@@ -96,13 +96,13 @@ class Logger:
                 should give them all the same ``exp_name``.)
         """
         if proc_id()==0:
-            i = 0
-            while True :
-                current_exp_dir = f'{output_dir}/{exp_name}/{exp_name}_{i}'
-                if not osp.exists(current_exp_dir) :
-                    break
-                i+=1
-
+            # i = 0
+            # while True :
+            #     current_exp_dir = f'{output_dir}/{exp_name}/{exp_name}_{i}'
+            #     if not osp.exists(current_exp_dir) :
+            #         break
+            #     i+=1
+            current_exp_dir = f'{output_dir}/{exp_name}'
             self.output_dir = current_exp_dir or "/tmp/experiments/%i"%int(time.time())
             if osp.exists(self.output_dir):
                 print("Warning: Log dir %s already exists! Storing info there anyway."%self.output_dir)

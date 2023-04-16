@@ -8,6 +8,7 @@ from torch.distributions.normal import Normal
 from torch.distributions.categorical import Categorical
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = "cpu"
 
 
 def combined_shape(length, shape=None):

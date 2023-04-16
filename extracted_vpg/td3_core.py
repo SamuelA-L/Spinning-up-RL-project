@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = "cpu"
 
 def combined_shape(length, shape=None):
     if shape is None:
@@ -32,8 +33,8 @@ class MLPActor(nn.Module):
 
     def forward(self, obs):
         # Return output from network scaled to action space limits.
-        # return self.act_limit * self.pi(obs.to(device))
-        return self.act_limit * self.pi(obs)
+        return self.act_limit * self.pi(obs.to(device))
+        # return self.act_limit * self.pi(obs)
 
 class MLPQFunction(nn.Module):
 
@@ -66,8 +67,5 @@ class MLPActorCritic(nn.Module):
 
     def act(self, obs):
         with torch.no_grad():
-            # return self.pi(obs.to(device)).cpu().numpy()
-            self.pi.eval()
-            action = self.pi(obs)
-            self.pi.train()
-            return action
+            return self.pi(obs.to(device)).cpu().numpy()
+
