@@ -14,9 +14,9 @@ n_steps = 5000
 env_name = 'HalfCheetah-v2'
 env_fn = lambda : gym.make(env_name)
 
-for i in range(3) :
+for i in range(1) :
 
-    exp_name = f"best_vpg_{env_name}_ac{size}_nsteps{n_steps}_seed{i}"
+    exp_name = f"3.8_best_vpg_{env_name}_ac{size}_nsteps{n_steps}_seed{i}"
     ac_kwargs = dict(hidden_sizes=size, activation=torch.nn.ReLU)
     logger_kwargs = dict(output_dir='data', exp_name=exp_name)
 
@@ -27,5 +27,5 @@ for i in range(3) :
         steps_per_epoch=n_steps,
         logger_kwargs=logger_kwargs,
         save_freq=1,
-        epochs=250
+        # epochs=250
     )
