@@ -61,7 +61,7 @@ class VPGBuffer:
         Append one timestep of agent-environment interaction to the buffer.
         """
         assert self.ptr < self.max_size  # buffer has to have room so you can store
-        self.obs_buf[self.ptr] = obs[0]
+        self.obs_buf[self.ptr] = obs
         self.act_buf[self.ptr] = act
         self.rew_buf[self.ptr] = rew
         self.val_buf[self.ptr] = val
